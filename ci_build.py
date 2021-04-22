@@ -61,13 +61,14 @@ class TeleNotifier:
         cfg = eval(str(self.data['result'][self.latest_id]['message']['text'].split()).replace("=", "':'").replace("[","{").replace("]", "}").replace("\s",""))
         for i in cfg:
             for j in GENERAL_CONFIG:
+                if i == 'KERNEL_STRING' and j == 'KERNEL_STRING':
+                    GENERAL_CONFIG[j] = cfg[j].replace("<s>", " ")
+                    continue
+                if i == 'SUPPORTED_VER' and j == 'SUPPORTED_VER':
+                    GENERAL_CONFIG[j] = " - ".join(cfg[j].split("-"))
                 if i == j:
                     GENERAL_CONFIG[j] = cfg[j]
             for l in ENV_CONFIG:
-                if i == 'KERNEL_STRING' and l == 'KERNEL_STRING':
-                    ENV_CONFIG[l] = cfg[l].replace("<s>", " ")
-                    os.environ[l] = ENV_CONFIG[l]
-                    continue
                 if i == l:
                     ENV_CONFIG[l] = cfg[l]
                     os.environ[l] = cfg[l]
