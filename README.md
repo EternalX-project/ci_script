@@ -1,4 +1,5 @@
-# Android Kernel Building Script - Integrated with CI/CD And Telegram Bot
+# Android Kernel Building Script 
+# Integrated with CI/CD And Telegram Bot
 
 ```
 $ python3 ci_build.py --help
