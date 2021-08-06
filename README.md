@@ -73,57 +73,60 @@ Including Anykernel3 flashable repacking.
     - messages is case sensitive.
 
 ## CI/CD Integration
-* ### Add Building Commands to your CI/CD Configurations (.yml). 
+* ### Prepare for source
+  Fork this repository to your github and edit ci_build.cfg. and then make sure you have a repository of your kernel source, toolchain, and anykernel3 that will needed by CI/CD.
+* ### Set up CI/CD Configurations
+  Add Building Commands to your CI/CD Configurations (config.yml) 
   - Configurations Example for <b>[Drone CI](https://drone.io)</b>:
-  ```
-  --- 
-  kind: pipeline
-  name: EternalX-Pipeline
+    ```
+    --- 
+    kind: pipeline
+    name: EternalX-Pipeline
 
-  clone:
-    depth: 1
+    clone:
+      depth: 1
 
-  steps: 
-    - name: Building
-      commands:
-        - apt-get -y update && apt-get -y upgrade && apt-get -y install bc build-essential bison flex zip gcc clang libc6 curl libstdc++6 git wget libssl-dev && apt-get -y install p7zip-full python python2 python3 python3-pip tzdata
-        - git clone https://github.com/zexceed12300/eternalx_ci -b EternalX-project/android_kernel_xiaomi_rosy-3.18 --depth=1
-        - cd eternalx_ci
-        - git clone https://github.com/EternalX-project/android_kernel_xiaomi_rosy-3.18.git --depth=1
-        - git clone https://github.com/zexceed12300/EternalX-flasher --depth=1
-        - git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b ndk-release-r16 --depth=1
-        - pip3 install -r requirements.txt  
-        - python3 ci_build.py --build --tele-notifier --tele-check --verbose --tele-tz Asia/Jakarta
-      image: fadlyas/kernel_dockerfile:latest
+    steps: 
+      - name: Building
+        commands:
+          - apt-get -y update && apt-get -y upgrade && apt-get -y install python python2 python3 python3-pip tzdata build-essential bc bison flex gcc clang libc6 libstdc++6 libssl-dev zip p7zip-full git
+          - git clone https://github.com/EternalX-project/ci_script -b master --depth=1
+          - cd ci_script
+          - git clone https://github.com/EternalX-project/android_kernel_xiaomi_rosy-4.9.git --depth=1
+          - git clone https://github.com/EternalX-project/EternalX-flasher --depth=1
+          - git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b ndk-release-r16 --depth=1
+          - pip3 install -r requirements.txt  
+          - python3 ci_build.py --build --tele-notifier --tele-check --verbose --tele-tz Asia/Jakarta
+        image: fadlyas/kernel_dockerfile:latest
 
-  trigger:
-    branch:
-      - lineage-18.1
-  ```
+    trigger:
+      branch:
+        - lineage-18.1
+    ```
   - Configurations Example for <b>[Circle CI](https://circleci.com)</b>:
-  ```
-  version: 2.1
-  jobs:
-    compile:
-     docker:
-        - image: ubuntu:20.04
-     steps:
-        - run:
-            no_output_timeout: 50m 
-            command: |
-             apt-get -y update && apt-get -y upgrade && apt-get -y install bc build-essential bison flex zip gcc clang libc6 curl libstdc++6 git wget libssl-dev && apt-get -y install p7zip-full python python2 python3 python3-pip tzdata
-             git clone https://github.com/zexceed12300/eternalx_ci -b EternalX-project/android_kernel_xiaomi_rosy-3.18
-             cd eternalx_ci
-             git clone https://github.com/zexceed12300/EternalX-flasher
-             git clone https://github.com/EternalX-project/android_kernel_xiaomi_rosy-3.18.git
-             git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b ndk-release-r16 --depth=1
-             pip3 install -r requirements.txt   
-             python3 ci_build.py --build --tele-notifier --tele-check --verbose --tele-tz Asia/Jakarta
-  workflows:
+    ```
     version: 2.1
-    cooking:
-      jobs:
-        - compile
-  ```
+    jobs:
+      compile:
+       docker:
+          - image: ubuntu:20.04
+       steps:
+          - run:
+              no_output_timeout: 50m 
+              command: |
+               apt-get -y update && apt-get -y upgrade && apt-get -y install python python2 python3 python3-pip tzdata build-essential bc bison flex gcc clang libc6 libstdc++6 libssl-dev zip p7zip-full git
+               git clone https://github.com/zexceed12300/ci_script -b master
+               cd ci_script
+               git clone https://github.com/zexceed12300/EternalX-flasher
+               git clone https://github.com/EternalX-project/android_kernel_xiaomi_rosy-4.9.git
+               git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b ndk-release-r16 --depth=1
+               pip3 install -r requirements.txt   
+               python3 ci_build.py --build --tele-notifier --tele-check --verbose --tele-tz Asia/Jakarta
+    workflows:
+      version: 2.1
+      cooking:
+        jobs:
+          - compile
+    ```
 * ### Start building
   You can start building by push some commit to your repository or start directly on CI/CD pipelines.
