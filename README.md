@@ -1,5 +1,5 @@
 # CI/CD Kernel Building Scripts
-A useful advanced kernel building scripts with CI/CD and Telegram bot integration features. Can be used on local or remote machine.<br>
+A useful advanced kernel building scripts with CI/CD and Telegram bot integration features.<br> Can be used on local or remote machine.<br>
 Including Anykernel3 flashable repacking.
 ## Installing Dependencies
 * ### Update package list
